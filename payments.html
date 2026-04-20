@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% block title %}Payments{% endblock %}
+{% block content %}
+<section class="section-head">
+  <div>
+    <h1>Payments</h1>
+    <p>{% if role == 'owner' %}Simple ledger view for rent status across units.{% else %}Mock payment experience with a clean checkout panel.{% endif %}</p>
+  </div>
+</section>
+
+{% if role == 'tenant' %}
+<div class="two-col layout-gap">
+  <section class="card">
+    <div class="panel-head"><h2>Payment history</h2></div>
+    <div class="payment-list">
+      {% for item in payments %}
+      <div class="payment-row">
+        <div>
+          <strong>{{ item.property_title }}</strong>
+          <p class="muted">Due {{ item.due_date }}</p>
+        </div>
+        <div class="payment-right">
+          <strong>${{ '{:,'.format(item.amount) }}</strong>
+          <span class="status-pill {{ item.status }}">{{ item.status }}</span>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="card form-card sticky-top">
+    <h2>Pay rent</h2>
+    <p class="muted">Mock checkout only. It marks a payment as paid but does not charge a real card.</p>
+    {% set unpaid = payments|selectattr('status', 'in', ['due', 'scheduled'])|list %}
+    {% if unpaid %}
+    <form method="post" class="stack-form">
+      <label>Select payment
+        <select name="payment_id" required>
+          {% for item in unpaid %}
+            <option value="{{ item.id }}">{{ item.property_title }} — ${{ '{:,'.format(item.amount) }} due {{ item.due_date }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label>Name on card<input type="text" name="card_name" required></label>
+      <label>Card number<input type="text" name="card_number" placeholder="4242 4242 4242 4242" required></label>
+      <label>Expiry<input type="text" placeholder="12/28"></label>
+      <label>CVV<input type="text" placeholder="123"></label>
+      <button class="button primary" type="submit">Submit mock payment</button>
+    </form>
+    {% else %}
+    <p>No unpaid rent is currently loaded.</p>
+    {% endif %}
+  </section>
+</div>
+{% else %}
+<div class="table-card card">
+  <table>
+    <thead>
+      <tr><th>Tenant</th><th>Property</th><th>Amount</th><th>Due date</th><th>Status</th><th>Method</th></tr>
+    </thead>
+    <tbody>
+      {% for item in payments %}
+      <tr>
+        <td>{{ item.tenant_name }}</td>
+        <td>{{ item.property_title }}</td>
+        <td>${{ '{:,'.format(item.amount) }}</td>
+        <td>{{ item.due_date }}</td>
+        <td><span class="status-pill {{ item.status }}">{{ item.status }}</span></td>
+        <td>{{ item.payment_method or '—' }}{% if item.card_last4 %} •••• {{ item.card_last4 }}{% endif %}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="6" class="muted">No payments yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+{% endblock %}
