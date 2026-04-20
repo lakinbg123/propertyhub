@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block title %}PropertyHub{% endblock %}
+{% block content %}
+<section class="hero card soft-hero">
+  <div>
+    <span class="eyebrow">Simple rental management</span>
+    <h1>Cleaner property management for owners and tenants.</h1>
+    <p class="lead">Applications, payments, messaging, and maintenance in one uncluttered workflow.</p>
+    <div class="hero-actions">
+      <a class="button primary" href="{{ url_for('properties') }}">Browse properties</a>
+      {% if not current_user %}
+        <a class="button secondary" href="{{ url_for('signup') }}">Create account</a>
+      {% else %}
+        <a class="button secondary" href="{{ url_for('dashboard') }}">Open dashboard</a>
+      {% endif %}
+    </div>
+  </div>
+  <div class="hero-panel card inset-panel">
+    <div class="mini-stat"><span>Applications</span><strong>Streamlined</strong></div>
+    <div class="mini-stat"><span>Payments</span><strong>Mock checkout ready</strong></div>
+    <div class="mini-stat"><span>Messaging</span><strong>Chat-style inbox</strong></div>
+  </div>
+</section>
+
+<section class="section-head">
+  <div>
+    <h2>Featured properties</h2>
+    <p>Minimal layout, clear calls to action, no junk.</p>
+  </div>
+</section>
+
+<div class="card-grid">
+  {% for item in featured %}
+    <article class="card property-card">
+      <img src="{{ item.image_url }}" alt="{{ item.title }}">
+      <div class="property-meta">
+        <span class="badge">{{ item.status }}</span>
+        <h3>{{ item.title }}</h3>
+        <p class="muted">{{ item.city }}, {{ item.state }}</p>
+        <p class="price">${{ '{:,'.format(item.rent) }}/mo</p>
+        <p class="muted">{{ item.beds }} bd · {{ item.baths }} ba · {{ item.sqft }} sqft</p>
+      </div>
+      <a class="button secondary full" href="{{ url_for('property_detail', property_id=item.id) }}">View property</a>
+    </article>
+  {% endfor %}
+</div>
+{% endblock %}

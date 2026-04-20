@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}{{ property.title }}{% endblock %}
+{% block content %}
+<div class="two-col layout-gap">
+  <section class="card detail-card">
+    <img class="detail-image" src="{{ property.image_url }}" alt="{{ property.title }}">
+    <span class="badge">{{ property.status }}</span>
+    <h1>{{ property.title }}</h1>
+    <p class="price">${{ '{:,'.format(property.rent) }}/month</p>
+    <p class="muted">{{ property.address }}, {{ property.city }}, {{ property.state }} {{ property.zip_code }}</p>
+    <p class="muted">{{ property.beds }} bd · {{ property.baths }} ba · {{ property.sqft }} sqft</p>
+    <p>{{ property.description }}</p>
+  </section>
+
+  <section class="card form-card sticky-top">
+    <h2>Apply now</h2>
+    <p class="muted">Simple one-step application for the demo flow.</p>
+    {% if current_user and current_user.role == 'tenant' %}
+    <form method="post" class="stack-form">
+      <label>Full name<input type="text" name="full_name" value="{{ current_user.name }}" required></label>
+      <label>Phone<input type="text" name="phone" placeholder="(555) 555-5555" required></label>
+      <label>Notes<textarea name="notes" placeholder="Move-in date, pets, employment, anything helpful."></textarea></label>
+      <button class="button primary" type="submit">Submit application</button>
+    </form>
+    {% else %}
+      <p>You need a tenant login to apply.</p>
+      <a class="button primary full" href="{{ url_for('login') }}">Login as tenant</a>
+    {% endif %}
+  </section>
+</div>
+{% endblock %}

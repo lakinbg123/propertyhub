@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% block title %}Maintenance{% endblock %}
+{% block content %}
+<section class="section-head">
+  <div>
+    <h1>Maintenance</h1>
+    <p>{% if role == 'owner' %}Track open service items cleanly.{% else %}Submit and monitor requests without leaving the app.{% endif %}</p>
+  </div>
+</section>
+
+{% if role == 'tenant' %}
+<div class="two-col layout-gap">
+  <section class="card">
+    <div class="panel-head"><h2>Your requests</h2></div>
+    {% for item in requests %}
+      <div class="list-row">
+        <div><strong>{{ item.title }}</strong><p class="muted">{{ item.property_title }}</p></div>
+        <span class="status-pill {{ item.status }}">{{ item.status }}</span>
+      </div>
+    {% else %}<p class="muted">No requests yet.</p>{% endfor %}
+  </section>
+
+  <section class="card form-card sticky-top">
+    <h2>New request</h2>
+    <form method="post" class="stack-form">
+      <label>Property
+        <select name="property_id" required>
+          {% for item in tenant_properties %}
+            <option value="{{ item.id }}">{{ item.title }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label>Title<input type="text" name="title" required></label>
+      <label>Priority
+        <select name="priority">
+          <option value="low">Low</option>
+          <option value="medium" selected>Medium</option>
+          <option value="high">High</option>
+        </select>
+      </label>
+      <label>Description<textarea name="description" required></textarea></label>
+      <button class="button primary" type="submit">Create request</button>
+    </form>
+  </section>
+</div>
+{% else %}
+<div class="table-card card">
+  <table>
+    <thead>
+      <tr><th>Tenant</th><th>Property</th><th>Issue</th><th>Priority</th><th>Status</th><th>Submitted</th></tr>
+    </thead>
+    <tbody>
+      {% for item in requests %}
+      <tr>
+        <td>{{ item.tenant_name }}</td>
+        <td>{{ item.property_title }}</td>
+        <td>{{ item.title }}<br><span class="muted">{{ item.description }}</span></td>
+        <td>{{ item.priority }}</td>
+        <td><span class="status-pill {{ item.status }}">{{ item.status }}</span></td>
+        <td>{{ item.created_at|datetime }}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="6" class="muted">No maintenance requests yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+{% endblock %}

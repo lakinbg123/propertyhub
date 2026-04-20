@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<div class="form-card card narrow">
+  <h1>Login</h1>
+  <form method="post" class="stack-form">
+    <label>Email<input type="email" name="email" required></label>
+    <label>Password<input type="password" name="password" required></label>
+    <button class="button primary" type="submit">Login</button>
+  </form>
+  <div class="demo-box">
+    <p><strong>Owner demo</strong> owner@propertyhub.com / demo123</p>
+    <p><strong>Tenant demo</strong> tenant@propertyhub.com / demo123</p>
+  </div>
+</div>
+{% endblock %}
